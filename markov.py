@@ -1,6 +1,7 @@
 """Generate Markov text from text files."""
 
 from random import choice
+import sys
 
 
 def open_and_read_file(file_path):
@@ -11,8 +12,12 @@ def open_and_read_file(file_path):
     """
 
     # your code goes here
+    
+    with open(file_path) as file: 
+        text = file.read()
+        text = text.rstrip("\n")
 
-    return "Contents of your file as one long string"
+    return text
 
 
 def make_chains(text_string):
@@ -22,7 +27,8 @@ def make_chains(text_string):
     and the value would be a list of the word(s) that follow those two
     words in the input text.
 
-    For example:
+    For example:{('Would', 'you'): 0}
+
 
         >>> chains = make_chains("hi there mary hi there juanita")
 
@@ -43,6 +49,16 @@ def make_chains(text_string):
     chains = {}
 
     # your code goes here
+    words = text_string.split()
+
+    for i in range(len(words) - 2):
+        chain_key = (words[i], words[i +1])
+        chain_value = (words[i+2])
+
+        if chain_key not in chains:
+            chains[chain_key] = [chain_value]
+        else:
+            chains[chain_key] += [chain_value]
 
     return chains
 
@@ -50,12 +66,24 @@ def make_chains(text_string):
 def make_text(chains):
     """Return text from chains."""
 
-    words = []
+    key = choice(list(chains.keys()))
+    value = choice(chains[key])
+    words = [key[0], key[1], value]
 
     # your code goes here
 
-    return " ".join(words)
+    # Loop of something
+    while True:
+        key = (key[1], value)
 
+        try:
+            value = choice(chains[key])
+            words.append(value)
+        except KeyError:
+            break
+            
+    return " ".join(words)
+                                            
 
 input_path = "green-eggs.txt"
 
@@ -65,7 +93,8 @@ input_text = open_and_read_file(input_path)
 # Get a Markov chain
 chains = make_chains(input_text)
 
+print(make_text(chains))
 # Produce random text
-random_text = make_text(chains)
+#random_text = make_text(chains)
 
-print(random_text)
+#print(random_text)
