@@ -19,7 +19,7 @@ def open_and_read_file(file_path):
     return text
 
 
-def make_chains(text_string):
+def make_chains(text_string, n):
     """Take input text as string; return dictionary of Markov chains.
 
     A chain will be a key that consists of a tuple of (word1, word2)
@@ -50,50 +50,58 @@ def make_chains(text_string):
     # your code goes here
     words = text_string.split()
 
-    for i in range(len(words) - 2):
-        chain_key = (words[i], words[i +1])
-        chain_value = (words[i+2])
+    for i in range(len(words) - n):         # 2 here is n
+        #chain_key = (words[i], words[i +1]) # 
+        #chain_value = (words[i+2])          # 2 here is n
 
-        if chain_key not in chains:
-            chains[chain_key] = [chain_value]
-        else:
-            chains[chain_key] += [chain_value]
+        chain_key = (,)
+        counter = 0
+        while counter <= n:
+            chain_key.append(words[i + counter])
+            chain_value = (words[i + n])
+
+            if chain_key not in chains:
+                chains[chain_key] = [chain_value]
+            else:
+                chains[chain_key] += [chain_value]
+
+            counter += 1
 
     return chains
 
 
-def make_text(chains):
-    """Return text from chains."""
+# def make_text(chains):
+#     """Return text from chains."""
 
-    key = choice(list(chains.keys()))  # choice(list(chains.keys())) = ('could', 'you')
-    value = choice(chains[key])        # chains[key] = ['in', 'in', 'with', 'with']
-    words = [key[0], key[1], value]    # Initial line = ['could', 'you', 'in']
+#     key = choice(list(chains.keys()))  # choice(list(chains.keys())) = ('could', 'you')
+#     value = choice(chains[key])        # chains[key] = ['in', 'in', 'with', 'with']
+#     words = [key[0], key[1], value]    # Initial line = ['could', 'you', 'in']
 
-    # your code goes here
+#     # your code goes here
 
-    # Loop of something
-    while True:
-        key = (key[1], value)          # ('you', 'in')
+#     # Loop of something
+#     while True:
+#         key = (key[1], value)          # ('you', 'in')
 
-        try:
-            value = choice(chains[key]) # chains[key] = ['a', 'a']
-            words.append(value)
-        except KeyError:                # When we reach ('I', 'am?')
-            break
+#         try:
+#             value = choice(chains[key]) # chains[key] = ['a', 'a']
+#             words.append(value)
+#         except KeyError:                # When we reach ('I', 'am?')
+#             break
             
-    return " ".join(words)
+#     return " ".join(words)
 
 
-# Call text file in terminal instead
-input_path = argv[1]
+# # Call text file in terminal instead
+# input_path = argv[1]
 
-# Open the file and turn it into one long string
-input_text = open_and_read_file(input_path)
+# # Open the file and turn it into one long string
+# input_text = open_and_read_file(input_path)
 
-# Get a Markov chain
-chains = make_chains(input_text)
+# # Get a Markov chain
+# chains = make_chains(input_text)
 
-# Produce random text
-random_text = make_text(chains)
+# # Produce random text
+# random_text = make_text(chains)
 
-print(random_text)
+# print(random_text)

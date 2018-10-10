@@ -1,7 +1,7 @@
 """Generate Markov text from text files."""
 
 from random import choice
-
+from sys import argv
 
 def open_and_read_file(file_path):
     """Take file path as string; return text as string.
@@ -19,7 +19,7 @@ def open_and_read_file(file_path):
     return text
 
 
-def make_chains(text_string):
+def make_chains(text_string, n):
     """Take input text as string; return dictionary of Markov chains.
 
     A chain will be a key that consists of a tuple of (word1, word2)
@@ -50,50 +50,75 @@ def make_chains(text_string):
     # your code goes here
     words = text_string.split()
 
-    for i in range(len(words) - 2):
-        chain_key = (words[i], words[i +1])
-        chain_value = (words[i+2])
+    for i in range(len(words) - n):
+
+        chain_key_lst = []
+        counter = 0
+        while counter < n:
+            chain_key_lst.append(words[i + counter])
+            counter += 1
+
+        chain_value = (words[i + n])
+        chain_key = tuple(chain_key_lst)
 
         if chain_key not in chains:
-            chains[chain_key] = [chain_value]
+            chains[chain_key] = [chain_value]   # Adding key-value pair
         else:
-            chains[chain_key] += [chain_value]
+            chains[chain_key] += [chain_value]  # Updating existing key with additional value
 
     return chains
 
 
-def make_text(chains):
+def make_text(chains, n):
     """Return text from chains."""
 
-    key = choice(list(chains.keys()))  # choice(list(chains.keys())) = ('could', 'you')
-    value = choice(chains[key])        # chains[key] = ['in', 'in', 'with', 'with']
-    words = [key[0], key[1], value]    # Initial line = ['could', 'you', 'in']
-
-    # your code goes here
-
-    # Loop of something
+    # Create initial key
+    key = choice(list(chains.keys()))   # Pick random key from the list of keys
+    #print("=== Initial key:\t", key)
+    
+    # Get initial word
+    value = choice(chains[key])         # Based on 'key', pick random value from list of values associated with 'key'
+    #print("=== Initial value:\t", value)
+    
+    # List of initial words (initial key and value)
+    words = list(key)                   # The initial key will always be the first n-words in the sentence
+                                        # So, initially, 'words' will be a list of 'key'
+    #print("=== Initial words:\t", words)
+    
     while True:
-        key = (key[1], value)          # ('you', 'in')
+        # Add word to words
+        words.append(value)    # For the first loop, 'value' is assigned in line 80, or the initial word
 
+        # Get next key
+        key = [key[i] for i in range(1,n)]
+        #print("--- New key (pre-tuple and value):\t", key)
+        
+        key = tuple(key + [value])
+        #print("+++ New key (post-tuple and value:\t", key)
+
+        # Get new word
         try:
-            value = choice(chains[key]) # chains[key] = ['a', 'a']
-            words.append(value)
+            value = choice(chains[key])
+
         except KeyError:                # When we reach ('I', 'am?')
             break
-            
+
     return " ".join(words)
 
 
-input_path = "green-eggs.txt"
+# Call text file in terminal instead
+input_path = argv[1]
+
+# n of n-grams
+n = 3
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
 
 # Get a Markov chain
-chains = make_chains(input_text)
+chains = make_chains(input_text, n)
 
-print(make_text(chains))
 # Produce random text
-#random_text = make_text(chains)
+random_text = make_text(chains, n)
 
-#print(random_text)
+print(random_text)
